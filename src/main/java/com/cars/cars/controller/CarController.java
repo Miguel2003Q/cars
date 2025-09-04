@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/cars")
@@ -19,32 +20,32 @@ public class CarController {
     private final AuthService authService;
     
     @GetMapping
-    public List<Car> getAllCars() {
-        User user = authService.getUserByUsername("user");
+    public List<Car> getAllCars(Principal principal) {
+        User user = authService.getUserByUsername(principal.getName());
         return carService.getAllCarsByUser(user);
     }
     
     @GetMapping("/{id}")
-    public Car getCarById(@PathVariable Long id) {
-        User user = authService.getUserByUsername("user");
+    public Car getCarById(@PathVariable Long id, Principal principal) {
+        User user = authService.getUserByUsername(principal.getName());
         return carService.getCarByIdAndUser(id, user);
     }
     
     @PostMapping
-    public Car createCar(@RequestBody Car car) {
-        User user = authService.getUserByUsername("user");
+    public Car createCar(@RequestBody Car car, Principal principal) {
+        User user = authService.getUserByUsername(principal.getName());
         return carService.createCar(car, user);
     }
     
     @PutMapping("/{id}")
-    public Car updateCar(@PathVariable Long id, @RequestBody Car car) {
-        User user = authService.getUserByUsername("user");
+    public Car updateCar(@PathVariable Long id, @RequestBody Car car, Principal principal) {
+        User user = authService.getUserByUsername(principal.getName());
         return carService.updateCar(id, car, user);
     }
     
     @DeleteMapping("/{id}")
-    public String deleteCar(@PathVariable Long id) {
-        User user = authService.getUserByUsername("user");
+    public String deleteCar(@PathVariable Long id, Principal principal) {
+        User user = authService.getUserByUsername(principal.getName());
         carService.deleteCar(id, user);
         return "Car deleted successfully";
     }
