@@ -47,6 +47,6 @@ public class CarController {
     public String deleteCar(@PathVariable Long id, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
         carService.deleteCar(id, user);
-        return "Car deleted successfully";
+        return "Auto eliminado exitosamente";
     }
 }
