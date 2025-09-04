@@ -54,4 +54,14 @@ public class CarService {
     public List<Car> searchCars(User user, String search) {
         return carRepository.findByUserIdAndSearch(user.getId(), search);
     }
+    
+    // Filtrado por año
+    public List<Car> filterCarsByYear(User user, Integer year) {
+        return carRepository.findByUserIdAndYear(user.getId(), year);
+    }
+    
+    // Filtrado por marca
+    public List<Car> filterCarsByBrand(User user, String brand) {
+        return carRepository.findByUserIdAndBrand(user.getId(), brand);
+    }
 }

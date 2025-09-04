@@ -32,6 +32,20 @@ public class CarController {
         return carService.searchCars(user, q);
     }
     
+    // Filtrado por año
+    @GetMapping("/by-year/{year}")
+    public List<Car> filterCarsByYear(@PathVariable Integer year, Principal principal) {
+        User user = authService.getUserByUsername(principal.getName());
+        return carService.filterCarsByYear(user, year);
+    }
+    
+    // Filtrado por marca
+    @GetMapping("/by-brand/{brand}")
+    public List<Car> filterCarsByBrand(@PathVariable String brand, Principal principal) {
+        User user = authService.getUserByUsername(principal.getName());
+        return carService.filterCarsByBrand(user, brand);
+    }
+    
     @GetMapping("/{id}")
     public Car getCarById(@PathVariable Long id, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());

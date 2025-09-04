@@ -21,4 +21,12 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     // Búsqueda por placa o modelo
     @Query("SELECT c FROM Car c WHERE c.user.id = :userId AND (c.licensePlate LIKE %:search% OR c.model LIKE %:search%)")
     List<Car> findByUserIdAndSearch(@Param("userId") Long userId, @Param("search") String search);
+    
+    // Filtrado por año
+    @Query("SELECT c FROM Car c WHERE c.user.id = :userId AND c.year = :year")
+    List<Car> findByUserIdAndYear(@Param("userId") Long userId, @Param("year") Integer year);
+    
+    // Filtrado por marca
+    @Query("SELECT c FROM Car c WHERE c.user.id = :userId AND c.brand = :brand")
+    List<Car> findByUserIdAndBrand(@Param("userId") Long userId, @Param("brand") String brand);
 }
