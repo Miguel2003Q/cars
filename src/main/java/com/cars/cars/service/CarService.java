@@ -41,6 +41,7 @@ public class CarService {
         car.setYear(carDetails.getYear());
         car.setLicensePlate(carDetails.getLicensePlate());
         car.setColor(carDetails.getColor());
+        car.setPhotoUrl(carDetails.getPhotoUrl());
         
         return carRepository.save(car);
     }

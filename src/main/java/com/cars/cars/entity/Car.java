@@ -32,6 +32,9 @@ public class Car {
     @Column(nullable = false)
     private String color;
     
+    @Column(name = "photo_url")
+    private String photoUrl;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
