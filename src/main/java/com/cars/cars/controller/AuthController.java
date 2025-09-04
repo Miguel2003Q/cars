@@ -18,31 +18,11 @@ public class AuthController {
     
     @PostMapping("/register")
     public Map<String, Object> register(@RequestBody User user) {
-        String token = authService.register(user);
-        User savedUser = authService.getUserByUsername(user.getUsername());
-        
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("user", Map.of(
-            "id", savedUser.getId(),
-            "username", savedUser.getUsername(),
-            "email", savedUser.getEmail()
-        ));
-        return response;
+        return authService.register(user);
     }
     
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody User user) {
-        String token = authService.login(user.getUsername(), user.getPassword());
-        User loggedUser = authService.getUserByUsername(user.getUsername());
-        
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("user", Map.of(
-            "id", loggedUser.getId(),
-            "username", loggedUser.getUsername(),
-            "email", loggedUser.getEmail()
-        ));
-        return response;
+        return authService.login(user.getUsername(), user.getPassword());
     }
 }

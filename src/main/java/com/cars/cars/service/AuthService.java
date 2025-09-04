@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -32,21 +34,68 @@ public class AuthService implements UserDetailsService {
                 .build();
     }
     
-    public String register(User user) {
+    public Map<String, Object> register(User user) {
+        // Verificar si el usuario ya existe
+        if (userRepository.existsByUsername(user.getUsername())) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "Username already exists");
+            return error;
+        }
+        
+        if (userRepository.existsByEmail(user.getEmail())) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "Email already exists");
+            return error;
+        }
+        
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        return jwtService.generateToken(loadUserByUsername(user.getUsername()));
+        String token = jwtService.generateToken(loadUserByUsername(user.getUsername()));
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "User registered successfully");
+        response.put("token", token);
+        response.put("user", Map.of(
+            "id", user.getId(),
+            "username", user.getUsername(),
+            "email", user.getEmail()
+        ));
+        return response;
     }
     
-    public String login(String username, String password) {
+    public Map<String, Object> login(String username, String password) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElse(null);
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
+        if (user == null) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "User not found");
+            return error;
         }
 
-        return jwtService.generateToken(loadUserByUsername(username));
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "Invalid password");
+            return error;
+        }
+
+        String token = jwtService.generateToken(loadUserByUsername(username));
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "Login successful");
+        response.put("token", token);
+        response.put("user", Map.of(
+            "id", user.getId(),
+            "username", user.getUsername(),
+            "email", user.getEmail()
+        ));
+        return response;
     }
     
     public User getUserByUsername(String username) {
