@@ -49,4 +49,9 @@ public class CarService {
         Car car = getCarByIdAndUser(carId, user);
         carRepository.delete(car);
     }
+    
+    // Búsqueda por placa o modelo
+    public List<Car> searchCars(User user, String search) {
+        return carRepository.findByUserIdAndSearch(user.getId(), search);
+    }
 }

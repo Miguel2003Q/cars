@@ -25,6 +25,13 @@ public class CarController {
         return carService.getAllCarsByUser(user);
     }
     
+    // Búsqueda por placa o modelo
+    @GetMapping("/search")
+    public List<Car> searchCars(@RequestParam String q, Principal principal) {
+        User user = authService.getUserByUsername(principal.getName());
+        return carService.searchCars(user, q);
+    }
+    
     @GetMapping("/{id}")
     public Car getCarById(@PathVariable Long id, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
