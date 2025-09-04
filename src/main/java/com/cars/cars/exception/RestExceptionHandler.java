@@ -17,6 +17,6 @@ public class RestExceptionHandler {
     
     @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
     public String handleGeneric(Exception ex) {
-        return "Error occurred";
+        return "Ocurrió un error";
     }
 }

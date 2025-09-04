@@ -21,12 +21,12 @@ public class CarService {
     
     public Car getCarByIdAndUser(Long carId, User user) {
         return carRepository.findByIdAndUserId(carId, user.getId())
-                .orElseThrow(() -> new NotFoundException("Car not found"));
+                .orElseThrow(() -> new NotFoundException("Auto no encontrado"));
     }
     
     public Car createCar(Car car, User user) {
         if (carRepository.existsByLicensePlate(car.getLicensePlate())) {
-            throw new RuntimeException("License plate already exists");
+            throw new RuntimeException("La placa ya existe");
         }
         
         car.setUser(user);

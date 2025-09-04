@@ -39,14 +39,14 @@ public class AuthService implements UserDetailsService {
         if (userRepository.existsByUsername(user.getUsername())) {
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
-            error.put("message", "Username already exists");
+            error.put("message", "El nombre de usuario ya existe");
             return error;
         }
         
         if (userRepository.existsByEmail(user.getEmail())) {
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
-            error.put("message", "Email already exists");
+            error.put("message", "El correo electrónico ya existe");
             return error;
         }
         
@@ -56,7 +56,7 @@ public class AuthService implements UserDetailsService {
         
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
-        response.put("message", "User registered successfully");
+        response.put("message", "Usuario registrado exitosamente");
         response.put("token", token);
         response.put("user", Map.of(
             "id", user.getId(),
@@ -73,14 +73,14 @@ public class AuthService implements UserDetailsService {
         if (user == null) {
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
-            error.put("message", "User not found");
+            error.put("message", "Usuario no encontrado");
             return error;
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
-            error.put("message", "Invalid password");
+            error.put("message", "Contraseña incorrecta");
             return error;
         }
 
@@ -88,7 +88,7 @@ public class AuthService implements UserDetailsService {
         
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
-        response.put("message", "Login successful");
+        response.put("message", "Inicio de sesión exitoso");
         response.put("token", token);
         response.put("user", Map.of(
             "id", user.getId(),
@@ -99,46 +99,74 @@ public class AuthService implements UserDetailsService {
     }
     
     public Map<String, Object> updateUser(String username, User updatedUser) {
-        User existingUser = userRepository.findByUsername(username)
-                .orElse(null);
+        try {
+            System.out.println("Actualizando usuario: " + username);
+            System.out.println("Email recibido: " + updatedUser.getEmail());
+            System.out.println("Contraseña recibida: " + (updatedUser.getPassword() != null ? "***" : "null"));
+            
+            User existingUser = userRepository.findByUsername(username)
+                    .orElse(null);
 
-        if (existingUser == null) {
+            if (existingUser == null) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "Usuario no encontrado");
+                return error;
+            }
+
+            // Validar que al menos un campo venga para actualizar
+            if ((updatedUser.getEmail() == null || updatedUser.getEmail().trim().isEmpty()) && 
+                (updatedUser.getPassword() == null || updatedUser.getPassword().trim().isEmpty())) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("success", false);
+                error.put("message", "Debe proporcionar al menos un campo (email o contraseña)");
+                return error;
+            }
+
+            // Actualizar email si se proporciona
+            if (updatedUser.getEmail() != null && !updatedUser.getEmail().trim().isEmpty()) {
+                // Verificar si el nuevo email ya existe en otro usuario
+                if (!existingUser.getEmail().equals(updatedUser.getEmail()) && 
+                    userRepository.existsByEmail(updatedUser.getEmail())) {
+                    Map<String, Object> error = new HashMap<>();
+                    error.put("success", false);
+                    error.put("message", "El correo electrónico ya existe");
+                    return error;
+                }
+                existingUser.setEmail(updatedUser.getEmail().trim());
+            }
+
+            // Actualizar contraseña si se proporciona
+            if (updatedUser.getPassword() != null && !updatedUser.getPassword().trim().isEmpty()) {
+                System.out.println("Actualizando contraseña para usuario: " + username);
+                existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword().trim()));
+                System.out.println("Contraseña actualizada exitosamente");
+            } else {
+                System.out.println("No se proporcionó contraseña o está vacía");
+            }
+            
+            userRepository.save(existingUser);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "Usuario actualizado exitosamente");
+            response.put("user", Map.of(
+                "id", existingUser.getId(),
+                "username", existingUser.getUsername(),
+                "email", existingUser.getEmail()
+            ));
+            return response;
+            
+        } catch (Exception e) {
             Map<String, Object> error = new HashMap<>();
             error.put("success", false);
-            error.put("message", "User not found");
+            error.put("message", "Error al actualizar usuario");
             return error;
         }
-
-        // Verificar si el nuevo email ya existe en otro usuario
-        if (!existingUser.getEmail().equals(updatedUser.getEmail()) && 
-            userRepository.existsByEmail(updatedUser.getEmail())) {
-            Map<String, Object> error = new HashMap<>();
-            error.put("success", false);
-            error.put("message", "Email already exists");
-            return error;
-        }
-
-        // Actualizar datos
-        existingUser.setEmail(updatedUser.getEmail());
-        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
-        }
-        
-        userRepository.save(existingUser);
-        
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "User updated successfully");
-        response.put("user", Map.of(
-            "id", existingUser.getId(),
-            "username", existingUser.getUsername(),
-            "email", existingUser.getEmail()
-        ));
-        return response;
     }
 
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
     }
 }
