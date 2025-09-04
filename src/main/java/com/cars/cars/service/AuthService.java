@@ -98,6 +98,45 @@ public class AuthService implements UserDetailsService {
         return response;
     }
     
+    public Map<String, Object> updateUser(String username, User updatedUser) {
+        User existingUser = userRepository.findByUsername(username)
+                .orElse(null);
+
+        if (existingUser == null) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "User not found");
+            return error;
+        }
+
+        // Verificar si el nuevo email ya existe en otro usuario
+        if (!existingUser.getEmail().equals(updatedUser.getEmail()) && 
+            userRepository.existsByEmail(updatedUser.getEmail())) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", "Email already exists");
+            return error;
+        }
+
+        // Actualizar datos
+        existingUser.setEmail(updatedUser.getEmail());
+        if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+        }
+        
+        userRepository.save(existingUser);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "User updated successfully");
+        response.put("user", Map.of(
+            "id", existingUser.getId(),
+            "username", existingUser.getUsername(),
+            "email", existingUser.getEmail()
+        ));
+        return response;
+    }
+
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new NotFoundException("User not found"));

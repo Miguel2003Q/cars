@@ -3,6 +3,7 @@ package com.cars.cars.controller;
 import com.cars.cars.entity.User;
 import com.cars.cars.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -24,5 +25,11 @@ public class AuthController {
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody User user) {
         return authService.login(user.getUsername(), user.getPassword());
+    }
+
+    @PutMapping("/update")
+    public Map<String, Object> updateUser(Authentication authentication, @RequestBody User user) {
+        String username = authentication.getName();
+        return authService.updateUser(username, user);
     }
 }
