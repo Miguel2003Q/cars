@@ -1,0 +1,40 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1>Dashboard</h1>
+      <div class="user-info">
+        <span>Bienvenido, {{ currentUser?.username }}</span>
+        <button class="btn btn-secondary" (click)="logout()">Cerrar Sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+    <div class="welcome-card">
+      <h2>¡Bienvenido a tu Dashboard!</h2>
+      <p>Has iniciado sesión correctamente en el sistema.</p>
+      
+      <div class="user-details">
+        <h3>Información del Usuario</h3>
+        <div class="detail-item">
+          <strong>Usuario:</strong> {{ currentUser?.username }}
+        </div>
+        <div class="detail-item">
+          <strong>Email:</strong> {{ currentUser?.email }}
+        </div>
+        <div class="detail-item">
+          <strong>ID:</strong> {{ currentUser?.id }}
+        </div>
+      </div>
+    </div>
+
+    <div class="actions-card">
+      <h3>Acciones Disponibles</h3>
+      <div class="action-buttons">
+        <button class="btn btn-primary">Ver Perfil</button>
+        <button class="btn btn-primary">Configuración</button>
+        <button class="btn btn-primary">Ayuda</button>
+      </div>
+    </div>
+  </main>
+</div>
