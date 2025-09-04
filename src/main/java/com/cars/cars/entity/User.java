@@ -27,12 +27,6 @@ public class User {
     @Column(nullable = false)
     private String password;
     
-    @Column(name = "first_name")
-    private String firstName;
-    
-    @Column(name = "last_name")
-    private String lastName;
-    
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Car> cars;
 }

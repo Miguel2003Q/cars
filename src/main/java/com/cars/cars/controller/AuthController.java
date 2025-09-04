@@ -26,9 +26,7 @@ public class AuthController {
         response.put("user", Map.of(
             "id", savedUser.getId(),
             "username", savedUser.getUsername(),
-            "email", savedUser.getEmail(),
-            "firstName", savedUser.getFirstName(),
-            "lastName", savedUser.getLastName()
+            "email", savedUser.getEmail()
         ));
         return response;
     }
@@ -43,9 +41,7 @@ public class AuthController {
         response.put("user", Map.of(
             "id", loggedUser.getId(),
             "username", loggedUser.getUsername(),
-            "email", loggedUser.getEmail(),
-            "firstName", loggedUser.getFirstName(),
-            "lastName", loggedUser.getLastName()
+            "email", loggedUser.getEmail()
         ));
         return response;
     }
