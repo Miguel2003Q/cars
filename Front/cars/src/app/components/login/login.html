@@ -31,8 +31,20 @@
         </div>
       </div>
 
+      <!-- Mensaje de éxito -->
+      <div class="success-message" *ngIf="successMessage" class="server-success">
+        {{ successMessage }}
+      </div>
+
+      <!-- Mensaje de error -->
       <div class="error-message" *ngIf="errorMessage" class="server-error">
         {{ errorMessage }}
+      </div>
+
+      <!-- Indicador de carga -->
+      <div class="loading-indicator" *ngIf="isLoading" class="server-loading">
+        <div class="spinner"></div>
+        <span>Iniciando sesión...</span>
       </div>
 
       <button 

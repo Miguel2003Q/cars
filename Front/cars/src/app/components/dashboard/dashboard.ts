@@ -11,6 +11,8 @@ import { AuthService, User } from '../../services/auth';
 })
 export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
+  isLoading = true;
+  errorMessage = '';
 
   constructor(
     private authService: AuthService,
@@ -20,11 +22,25 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
       this.currentUser = user;
+      this.isLoading = false;
     });
 
     // Si no está autenticado, redirigir al login
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/login']);
+    } else {
+      // Intentar obtener información del usuario actual
+      this.authService.getCurrentUser().subscribe({
+        next: (user) => {
+          this.currentUser = user;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error al obtener usuario:', error);
+          this.errorMessage = 'Error al cargar información del usuario';
+          this.isLoading = false;
+        }
+      });
     }
   }
 

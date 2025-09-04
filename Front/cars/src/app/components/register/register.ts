@@ -14,6 +14,7 @@ export class RegisterComponent {
   registerForm: FormGroup;
   isLoading = false;
   errorMessage = '';
+  successMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -44,6 +45,7 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       this.isLoading = true;
       this.errorMessage = '';
+      this.successMessage = '';
       
       const userData: RegisterRequest = {
         username: this.registerForm.value.username,
@@ -51,14 +53,29 @@ export class RegisterComponent {
         password: this.registerForm.value.password
       };
       
+      console.log('Enviando datos de registro:', userData);
+      
       this.authService.register(userData).subscribe({
         next: (response) => {
           this.isLoading = false;
-          this.router.navigate(['/dashboard']);
+          console.log('Respuesta del servidor:', response);
+          
+          if (response.success) {
+            this.successMessage = response.message || '¡Registro exitoso!';
+            // Limpiar el formulario
+            this.registerForm.reset();
+            // Redirigir después de 2 segundos
+            setTimeout(() => {
+              this.router.navigate(['/dashboard']);
+            }, 2000);
+          } else {
+            this.errorMessage = response.message || 'Error al registrarse';
+          }
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = error.error?.message || 'Error al registrarse';
+          console.error('Error en la petición:', error);
+          this.errorMessage = error.error?.message || error.message || 'Error al conectarse con el servidor';
         }
       });
     } else {

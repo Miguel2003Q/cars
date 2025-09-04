@@ -27,6 +27,18 @@ public class AuthController {
         return authService.login(user.getUsername(), user.getPassword());
     }
 
+    @GetMapping("/me")
+    public Map<String, Object> getCurrentUser(Authentication authentication) {
+        String username = authentication.getName();
+        User user = authService.getUserByUsername(username);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        response.put("username", user.getUsername());
+        response.put("email", user.getEmail());
+        return response;
+    }
+
     @PutMapping("/update")
     public Map<String, Object> updateUser(Authentication authentication, @RequestBody User user) {
         String username = authentication.getName();

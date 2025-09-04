@@ -10,7 +10,21 @@
   </header>
 
   <main class="dashboard-main">
-    <div class="welcome-card">
+    <!-- Indicador de carga -->
+    <div class="loading-card" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <h3>Cargando información del usuario...</h3>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div class="error-card" *ngIf="errorMessage && !isLoading">
+      <h3>⚠️ Error</h3>
+      <p>{{ errorMessage }}</p>
+      <button class="btn btn-primary" (click)="ngOnInit()">Reintentar</button>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="welcome-card" *ngIf="!isLoading && !errorMessage">
       <h2>¡Bienvenido a tu Dashboard!</h2>
       <p>Has iniciado sesión correctamente en el sistema.</p>
       

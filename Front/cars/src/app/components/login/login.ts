@@ -14,6 +14,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   isLoading = false;
   errorMessage = '';
+  successMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -30,17 +31,31 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.errorMessage = '';
+      this.successMessage = '';
       
       const credentials: LoginRequest = this.loginForm.value;
+      
+      console.log('Enviando credenciales de login:', credentials);
       
       this.authService.login(credentials).subscribe({
         next: (response) => {
           this.isLoading = false;
-          this.router.navigate(['/dashboard']);
+          console.log('Respuesta del servidor:', response);
+          
+          if (response.success) {
+            this.successMessage = response.message || '¡Inicio de sesión exitoso!';
+            // Redirigir después de 1 segundo
+            setTimeout(() => {
+              this.router.navigate(['/dashboard']);
+            }, 1000);
+          } else {
+            this.errorMessage = response.message || 'Error al iniciar sesión';
+          }
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorMessage = error.error?.message || 'Error al iniciar sesión';
+          console.error('Error en la petición:', error);
+          this.errorMessage = error.error?.message || error.message || 'Error al conectarse con el servidor';
         }
       });
     } else {
