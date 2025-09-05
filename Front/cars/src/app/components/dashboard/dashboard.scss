@@ -105,6 +105,13 @@ h1 {
   font-size: 1.1rem;
 }
 
+.dashboard-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
 .user-details {
   background: #f8f9fa;
   border-radius: 8px;
@@ -165,6 +172,12 @@ h1 {
     background: #5a6268;
     box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
   }
+}
+
+.btn-large {
+  padding: 16px 32px;
+  font-size: 16px;
+  min-width: 200px;
 }
 
 @media (max-width: 768px) {

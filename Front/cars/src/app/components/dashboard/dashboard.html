@@ -27,19 +27,15 @@
     <!-- Contenido principal -->
     <div class="welcome-card" *ngIf="!isLoading && !errorMessage">
       <h2>¡Bienvenido a tu Dashboard!</h2>
-      <p>Has iniciado sesión correctamente en el sistema.</p>
+      <p>Gestiona tu flota de vehículos de manera fácil y eficiente.</p>
       
-      <div class="user-details">
-        <h3>Información del Usuario</h3>
-        <div class="detail-item">
-          <strong>Usuario:</strong> {{ currentUser?.username }}
-        </div>
-        <div class="detail-item">
-          <strong>Email:</strong> {{ currentUser?.email }}
-        </div>
-        <div class="detail-item">
-          <strong>ID:</strong> {{ currentUser?.id }}
-        </div>
+      <div class="dashboard-actions">
+        <button class="btn btn-primary btn-large" (click)="goToCars()">
+          🚗 Ver Mis Carros
+        </button>
+        <button class="btn btn-secondary btn-large" (click)="goToProfile()">
+          👤 Mi Perfil
+        </button>
       </div>
     </div>
 

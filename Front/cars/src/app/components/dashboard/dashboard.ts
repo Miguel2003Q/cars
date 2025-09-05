@@ -44,6 +44,10 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  goToCars() {
+    this.router.navigate(['/cars']);
+  }
+
   goToProfile() {
     this.router.navigate(['/profile']);
   }
