@@ -37,7 +37,16 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       const token = localStorage.getItem('token');
       if (token) {
-        this.getCurrentUser().subscribe();
+        this.getCurrentUser().subscribe({
+          next: (user) => {
+            this.currentUserSubject.next(user);
+          },
+          error: (error) => {
+            console.error('Error al cargar usuario:', error);
+            localStorage.removeItem('token');
+            this.currentUserSubject.next(null);
+          }
+        });
       }
     }
   }
