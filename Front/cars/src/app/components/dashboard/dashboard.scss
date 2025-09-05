@@ -48,7 +48,7 @@ h1 {
   grid-template-columns: 1fr;
 }
 
-.welcome-card, .actions-card, .loading-card, .error-card {
+.welcome-card, .loading-card, .error-card {
   background: white;
   border-radius: 12px;
   padding: 2rem;
@@ -128,17 +128,6 @@ h1 {
   }
 }
 
-.actions-card h3 {
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-size: 1.2rem;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
 
 .btn {
   padding: 12px 24px;
@@ -189,9 +178,6 @@ h1 {
     padding: 1rem;
   }
 
-  .action-buttons {
-    justify-content: center;
-  }
 
   .btn {
     flex: 1;

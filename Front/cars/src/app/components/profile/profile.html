@@ -1,0 +1,103 @@
+<div class="profile-container">
+  <header class="profile-header">
+    <div class="header-content">
+      <button class="btn btn-back" (click)="goBack()">
+        ← Volver al Dashboard
+      </button>
+      <h1>Mi Perfil</h1>
+    </div>
+  </header>
+
+  <main class="profile-main">
+    <!-- Indicador de carga -->
+    <div class="loading-card" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <h3>Cargando información del perfil...</h3>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div class="error-card" *ngIf="errorMessage && !isLoading">
+      <h3>⚠️ Error</h3>
+      <p>{{ errorMessage }}</p>
+      <button class="btn btn-primary" (click)="loadUserProfile()">Reintentar</button>
+    </div>
+
+    <!-- Mensaje de éxito -->
+    <div class="success-card" *ngIf="successMessage && !isLoading">
+      <h3>✅ Éxito</h3>
+      <p>{{ successMessage }}</p>
+    </div>
+
+    <!-- Contenido principal del perfil -->
+    <div class="profile-card" *ngIf="!isLoading && !errorMessage && currentUser">
+      <div class="profile-header-card">
+        <div class="avatar">
+          <span>{{ currentUser.username.charAt(0).toUpperCase() }}</span>
+        </div>
+        <div class="user-info">
+          <h2>{{ currentUser.username }}</h2>
+          <p>{{ currentUser.email }}</p>
+        </div>
+        <button 
+          class="btn btn-edit" 
+          (click)="startEditing()" 
+          *ngIf="!isEditing">
+          ✏️ Editar Perfil
+        </button>
+      </div>
+
+      <div class="profile-details">
+        <h3>Información Personal</h3>
+        
+        <div class="detail-section">
+          <div class="detail-item">
+            <label>Usuario:</label>
+            <div class="detail-value" *ngIf="!isEditing">
+              {{ currentUser.username }}
+            </div>
+            <input 
+              type="text" 
+              [(ngModel)]="editForm.username" 
+              class="form-input"
+              *ngIf="isEditing">
+          </div>
+
+          <div class="detail-item">
+            <label>Email:</label>
+            <div class="detail-value" *ngIf="!isEditing">
+              {{ currentUser.email }}
+            </div>
+            <input 
+              type="email" 
+              [(ngModel)]="editForm.email" 
+              class="form-input"
+              *ngIf="isEditing">
+          </div>
+
+          <div class="detail-item">
+            <label>ID de Usuario:</label>
+            <div class="detail-value">
+              {{ currentUser.id }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de acción cuando está editando -->
+        <div class="action-buttons" *ngIf="isEditing">
+          <button 
+            class="btn btn-save" 
+            (click)="saveProfile()"
+            [disabled]="isLoading">
+            💾 Guardar Cambios
+          </button>
+          <button 
+            class="btn btn-cancel" 
+            (click)="cancelEditing()"
+            [disabled]="isLoading">
+            ❌ Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

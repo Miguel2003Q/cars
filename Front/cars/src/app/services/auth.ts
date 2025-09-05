@@ -99,4 +99,14 @@ export class AuthService {
     }
     return null;
   }
+
+  updateUser(userData: User): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update`, userData).pipe(
+      tap((response: any) => {
+        if (response.user) {
+          this.currentUserSubject.next(response.user);
+        }
+      })
+    );
+  }
 }

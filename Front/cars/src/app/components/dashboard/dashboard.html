@@ -4,6 +4,7 @@
       <h1>Dashboard</h1>
       <div class="user-info">
         <span>Bienvenido, {{ currentUser?.username }}</span>
+        <button class="btn btn-primary" (click)="goToProfile()">Mi Perfil</button>
         <button class="btn btn-secondary" (click)="logout()">Cerrar Sesión</button>
       </div>
     </div>
@@ -42,13 +43,5 @@
       </div>
     </div>
 
-    <div class="actions-card">
-      <h3>Acciones Disponibles</h3>
-      <div class="action-buttons">
-        <button class="btn btn-primary">Ver Perfil</button>
-        <button class="btn btn-primary">Configuración</button>
-        <button class="btn btn-primary">Ayuda</button>
-      </div>
-    </div>
   </main>
 </div>

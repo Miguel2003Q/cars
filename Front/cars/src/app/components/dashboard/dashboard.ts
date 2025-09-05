@@ -44,6 +44,10 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  goToProfile() {
+    this.router.navigate(['/profile']);
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
