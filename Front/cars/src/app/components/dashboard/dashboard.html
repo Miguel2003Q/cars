@@ -1,11 +1,35 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
     <div class="header-content">
-      <h1>Dashboard</h1>
-      <div class="user-info">
-        <span>Bienvenido, {{ currentUser?.username }}</span>
-        <button class="btn btn-primary" (click)="goToProfile()">Mi Perfil</button>
-        <button class="btn btn-secondary" (click)="logout()">Cerrar Sesión</button>
+      <h1>My Cars</h1>
+      
+      <!-- Desktop Menu -->
+      <div class="desktop-menu">
+        <div class="user-info">
+          <span>Bienvenido, {{ currentUser?.username }}</span>
+          <button class="btn btn-primary" (click)="goToProfile()">Mi Perfil</button>
+          <button class="btn btn-secondary" (click)="logout()">Cerrar Sesión</button>
+        </div>
+      </div>
+      
+      <!-- Mobile Menu Button -->
+      <button class="mobile-menu-btn" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" [class.open]="isMobileMenuOpen">
+      <div class="mobile-menu-content">
+        <div class="mobile-user-info">
+          <span>Bienvenido, {{ currentUser?.username }}</span>
+        </div>
+        <div class="mobile-menu-actions">
+          <button class="btn btn-primary" (click)="goToProfile(); closeMobileMenu()">Mi Perfil</button>
+          <button class="btn btn-secondary" (click)="logout()">Cerrar Sesión</button>
+        </div>
       </div>
     </div>
   </header>

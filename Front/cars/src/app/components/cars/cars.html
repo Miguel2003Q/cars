@@ -1,13 +1,38 @@
 <div class="cars-container">
   <header class="cars-header">
     <div class="header-content">
-      <button class="btn btn-back" (click)="goBack()">
-        ← Volver al Dashboard
-      </button>
       <h1>Mis Carros</h1>
-      <button class="btn btn-primary" (click)="showAddCarForm()">
-        + Agregar Carro
+      
+      <!-- Desktop Menu -->
+      <div class="desktop-menu">
+        <button class="btn btn-back" (click)="goBack()">
+          ← Volver al Dashboard
+        </button>
+        <button class="btn btn-primary" (click)="showAddCarForm()">
+          + Agregar Carro
+        </button>
+      </div>
+      
+      <!-- Mobile Menu Button -->
+      <button class="mobile-menu-btn" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" [class.open]="isMobileMenuOpen">
+      <div class="mobile-menu-content">
+        <div class="mobile-menu-actions">
+          <button class="btn btn-back" (click)="goBack(); closeMobileMenu()">
+            ← Volver al Dashboard
+          </button>
+          <button class="btn btn-primary" (click)="showAddCarForm(); closeMobileMenu()">
+            + Agregar Carro
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -33,7 +58,7 @@
             type="text" 
             [(ngModel)]="searchQuery" 
             (input)="searchCars()"
-            placeholder="Buscar por placa o modelo..."
+            placeholder="Buscar por número de placa o modelo..."
             class="search-input">
         </div>
         
@@ -74,14 +99,21 @@
           </div>
           
           <div class="car-info">
-            <h3>{{ car.brand }} {{ car.model }}</h3>
             <div class="car-details">
+              <div class="detail-item">
+                <span class="label">Marca:</span>
+                <span class="value">{{ car.brand }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Modelo:</span>
+                <span class="value">{{ car.model }}</span>
+              </div>
               <div class="detail-item">
                 <span class="label">Año:</span>
                 <span class="value">{{ car.year }}</span>
               </div>
               <div class="detail-item">
-                <span class="label">Placa:</span>
+                <span class="label">Número de Placa:</span>
                 <span class="value">{{ car.licensePlate }}</span>
               </div>
               <div class="detail-item">
@@ -155,7 +187,7 @@
               </div>
               
               <div class="form-group">
-                <label>Placa *</label>
+                <label>Número de Placa *</label>
                 <input 
                   type="text" 
                   [(ngModel)]="carForm.licensePlate" 

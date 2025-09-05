@@ -16,6 +16,7 @@ export class ProfileComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  isMobileMenuOpen = false;
 
   // Formulario de edición
   editForm = {
@@ -99,5 +100,13 @@ export class ProfileComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/dashboard']);
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
   }
 }

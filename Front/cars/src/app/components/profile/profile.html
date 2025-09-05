@@ -1,10 +1,32 @@
 <div class="profile-container">
   <header class="profile-header">
     <div class="header-content">
-      <button class="btn btn-back" (click)="goBack()">
-        ← Volver al Dashboard
-      </button>
       <h1>Mi Perfil</h1>
+      
+      <!-- Desktop Menu -->
+      <div class="desktop-menu">
+        <button class="btn btn-back" (click)="goBack()">
+          ← Volver al Dashboard
+        </button>
+      </div>
+      
+      <!-- Mobile Menu Button -->
+      <button class="mobile-menu-btn" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" [class.open]="isMobileMenuOpen">
+      <div class="mobile-menu-content">
+        <div class="mobile-menu-actions">
+          <button class="btn btn-back" (click)="goBack(); closeMobileMenu()">
+            ← Volver al Dashboard
+          </button>
+        </div>
+      </div>
     </div>
   </header>
 

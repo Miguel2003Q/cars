@@ -23,6 +23,7 @@ export class CarsComponent implements OnInit {
   editingCar: Car | null = null;
   selectedFile: File | null = null;
   previewUrl: string | null = null;
+  isMobileMenuOpen = false;
 
   // Formulario para nuevo/editar carro
   carForm = {
@@ -298,6 +299,14 @@ export class CarsComponent implements OnInit {
 
   goBack() {
     this.router.navigate(['/dashboard']);
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
   }
 
   trackByCarId(index: number, car: Car): number | undefined {

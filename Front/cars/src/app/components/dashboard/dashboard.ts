@@ -13,6 +13,7 @@ export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
   isLoading = true;
   errorMessage = '';
+  isMobileMenuOpen = false;
 
   constructor(
     private authService: AuthService,
@@ -55,5 +56,13 @@ export class DashboardComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
   }
 }

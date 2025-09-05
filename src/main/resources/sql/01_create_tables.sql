@@ -87,23 +87,4 @@ SHOW TABLES;
 DESCRIBE users;
 DESCRIBE cars;
 
--- =============================================
--- Verificar datos insertados
--- =============================================
-SELECT 'Usuarios creados:' as info;
-SELECT id, username, email, created_at FROM users;
 
-SELECT 'Autos creados:' as info;
-SELECT c.id, c.brand, c.model, c.year, c.license_plate, c.color, u.username as owner
-FROM cars c 
-JOIN users u ON c.user_id = u.id 
-ORDER BY u.username, c.brand;
-
--- =============================================
--- Estadísticas finales
--- =============================================
-SELECT 
-    'Estadísticas:' as info,
-    (SELECT COUNT(*) FROM users) as total_users,
-    (SELECT COUNT(*) FROM cars) as total_cars,
-    (SELECT COUNT(DISTINCT brand) FROM cars) as unique_brands;
