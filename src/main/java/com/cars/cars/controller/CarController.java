@@ -1,6 +1,8 @@
 package com.cars.cars.controller;
 
-import com.cars.cars.entity.Car;
+import com.cars.cars.dto.CarCreateDTO;
+import com.cars.cars.dto.CarDTO;
+import com.cars.cars.dto.CarUpdateDTO;
 import com.cars.cars.entity.User;
 import com.cars.cars.service.AuthService;
 import com.cars.cars.service.CarService;
@@ -25,7 +27,7 @@ public class CarController {
     private final CloudinaryService cloudinaryService;
     
     @GetMapping
-    public List<Car> getAllCars(Principal principal) {
+    public List<CarDTO> getAllCars(Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
         return carService.getAllCarsByUser(user);
     }
@@ -35,7 +37,7 @@ public class CarController {
     public ResponseEntity<Map<String, Object>> debugCars(Principal principal) {
         try {
             User user = authService.getUserByUsername(principal.getName());
-            List<Car> cars = carService.getAllCarsByUser(user);
+            List<CarDTO> cars = carService.getAllCarsByUser(user);
             
             return ResponseEntity.ok(Map.of(
                 "user", user.getUsername(),
@@ -84,43 +86,43 @@ public class CarController {
         }
     }
     
-    // Búsqueda por placa o modelo
+    // Búsqueda por placa
     @GetMapping("/search")
-    public List<Car> searchCars(@RequestParam String q, Principal principal) {
+    public List<CarDTO> searchCars(@RequestParam String q, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
         return carService.searchCars(user, q);
     }
     
     // Filtrado por año
     @GetMapping("/by-year/{year}")
-    public List<Car> filterCarsByYear(@PathVariable Integer year, Principal principal) {
+    public List<CarDTO> filterCarsByYear(@PathVariable Integer year, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
         return carService.filterCarsByYear(user, year);
     }
     
     // Filtrado por marca
     @GetMapping("/by-brand/{brand}")
-    public List<Car> filterCarsByBrand(@PathVariable String brand, Principal principal) {
+    public List<CarDTO> filterCarsByBrand(@PathVariable String brand, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
         return carService.filterCarsByBrand(user, brand);
     }
     
     @GetMapping("/{id}")
-    public Car getCarById(@PathVariable Long id, Principal principal) {
+    public CarDTO getCarById(@PathVariable Long id, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
         return carService.getCarByIdAndUser(id, user);
     }
     
     @PostMapping
-    public Car createCar(@RequestBody Car car, Principal principal) {
+    public CarDTO createCar(@RequestBody CarCreateDTO carCreateDTO, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
-        return carService.createCar(car, user);
+        return carService.createCar(carCreateDTO, user);
     }
     
     @PutMapping("/{id}")
-    public Car updateCar(@PathVariable Long id, @RequestBody Car car, Principal principal) {
+    public CarDTO updateCar(@PathVariable Long id, @RequestBody CarUpdateDTO carUpdateDTO, Principal principal) {
         User user = authService.getUserByUsername(principal.getName());
-        return carService.updateCar(id, car, user);
+        return carService.updateCar(id, carUpdateDTO, user);
     }
     
     @DeleteMapping("/{id}")
@@ -145,15 +147,22 @@ public class CarController {
             User user = authService.getUserByUsername(principal.getName());
             System.out.println("User found: " + (user != null ? user.getUsername() : "null"));
             
-            Car car = carService.getCarByIdAndUser(id, user);
-            System.out.println("Car found: " + (car != null ? car.getId() : "null"));
+            CarDTO carDTO = carService.getCarByIdAndUser(id, user);
+            System.out.println("Car found: " + (carDTO != null ? carDTO.getId() : "null"));
             
             // Subir imagen a Cloudinary
             String imageUrl = cloudinaryService.uploadImage(file, "cars");
             
             // Actualizar el auto con la nueva URL de imagen
-            car.setPhotoUrl(imageUrl);
-            carService.updateCar(id, car, user);
+            CarUpdateDTO updateDTO = new CarUpdateDTO();
+            updateDTO.setBrand(carDTO.getBrand());
+            updateDTO.setModel(carDTO.getModel());
+            updateDTO.setYear(carDTO.getYear());
+            updateDTO.setLicensePlate(carDTO.getLicensePlate());
+            updateDTO.setColor(carDTO.getColor());
+            updateDTO.setPhotoUrl(imageUrl);
+            
+            carService.updateCar(id, updateDTO, user);
             
             return ResponseEntity.ok(Map.of(
                 "message", "Foto subida exitosamente",
@@ -174,19 +183,26 @@ public class CarController {
             Principal principal) {
         try {
             User user = authService.getUserByUsername(principal.getName());
-            Car car = carService.getCarByIdAndUser(id, user);
+            CarDTO carDTO = carService.getCarByIdAndUser(id, user);
             
             // Si ya tiene una imagen, eliminarla de Cloudinary
-            if (car.getPhotoUrl() != null && !car.getPhotoUrl().isEmpty()) {
-                cloudinaryService.deleteImage(car.getPhotoUrl());
+            if (carDTO.getPhotoUrl() != null && !carDTO.getPhotoUrl().isEmpty()) {
+                cloudinaryService.deleteImage(carDTO.getPhotoUrl());
             }
             
             // Subir nueva imagen
             String imageUrl = cloudinaryService.uploadImage(file, "cars");
             
             // Actualizar el auto con la nueva URL
-            car.setPhotoUrl(imageUrl);
-            carService.updateCar(id, car, user);
+            CarUpdateDTO updateDTO = new CarUpdateDTO();
+            updateDTO.setBrand(carDTO.getBrand());
+            updateDTO.setModel(carDTO.getModel());
+            updateDTO.setYear(carDTO.getYear());
+            updateDTO.setLicensePlate(carDTO.getLicensePlate());
+            updateDTO.setColor(carDTO.getColor());
+            updateDTO.setPhotoUrl(imageUrl);
+            
+            carService.updateCar(id, updateDTO, user);
             
             return ResponseEntity.ok(Map.of(
                 "message", "Foto actualizada exitosamente",
@@ -206,15 +222,22 @@ public class CarController {
             Principal principal) {
         try {
             User user = authService.getUserByUsername(principal.getName());
-            Car car = carService.getCarByIdAndUser(id, user);
+            CarDTO carDTO = carService.getCarByIdAndUser(id, user);
             
-            if (car.getPhotoUrl() != null && !car.getPhotoUrl().isEmpty()) {
+            if (carDTO.getPhotoUrl() != null && !carDTO.getPhotoUrl().isEmpty()) {
                 // Eliminar imagen de Cloudinary
-                cloudinaryService.deleteImage(car.getPhotoUrl());
+                cloudinaryService.deleteImage(carDTO.getPhotoUrl());
                 
                 // Limpiar URL en la base de datos
-                car.setPhotoUrl(null);
-                carService.updateCar(id, car, user);
+                CarUpdateDTO updateDTO = new CarUpdateDTO();
+                updateDTO.setBrand(carDTO.getBrand());
+                updateDTO.setModel(carDTO.getModel());
+                updateDTO.setYear(carDTO.getYear());
+                updateDTO.setLicensePlate(carDTO.getLicensePlate());
+                updateDTO.setColor(carDTO.getColor());
+                updateDTO.setPhotoUrl(null);
+                
+                carService.updateCar(id, updateDTO, user);
                 
                 return ResponseEntity.ok(Map.of(
                     "message", "Foto eliminada exitosamente"
@@ -236,11 +259,11 @@ public class CarController {
     public ResponseEntity<Map<String, String>> getCarPhoto(@PathVariable Long id, Principal principal) {
         try {
             User user = authService.getUserByUsername(principal.getName());
-            Car car = carService.getCarByIdAndUser(id, user);
+            CarDTO carDTO = carService.getCarByIdAndUser(id, user);
             
-            if (car.getPhotoUrl() != null && !car.getPhotoUrl().isEmpty()) {
+            if (carDTO.getPhotoUrl() != null && !carDTO.getPhotoUrl().isEmpty()) {
                 return ResponseEntity.ok(Map.of(
-                    "imageUrl", car.getPhotoUrl()
+                    "imageUrl", carDTO.getPhotoUrl()
                 ));
             } else {
                 return ResponseEntity.ok(Map.of(

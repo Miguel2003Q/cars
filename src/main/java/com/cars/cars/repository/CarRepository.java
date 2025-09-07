@@ -18,8 +18,8 @@ public interface CarRepository extends JpaRepository<Car, Long> {
     
     boolean existsByLicensePlate(String licensePlate);
     
-    // Búsqueda por placa o modelo
-    List<Car> findByUserIdAndSearch( Long userId,  String search);
+    // Búsqueda por placa
+    List<Car> findByUserIdAndLicensePlateContainingIgnoreCase(Long userId, String licensePlate);
     
     // Filtrado por año
     List<Car> findByUserIdAndYear(Long userId, Integer year);

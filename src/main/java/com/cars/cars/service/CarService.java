@@ -1,5 +1,8 @@
 package com.cars.cars.service;
 
+import com.cars.cars.dto.CarCreateDTO;
+import com.cars.cars.dto.CarDTO;
+import com.cars.cars.dto.CarUpdateDTO;
 import com.cars.cars.entity.Car;
 import com.cars.cars.entity.User;
 import com.cars.cars.exception.NotFoundException;
@@ -8,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -15,54 +19,93 @@ public class CarService {
     
     private final CarRepository carRepository;
     
-    public List<Car> getAllCarsByUser(User user) {
-        return carRepository.findByUserId(user.getId());
+    public List<CarDTO> getAllCarsByUser(User user) {
+        List<Car> cars = carRepository.findByUserId(user.getId());
+        return cars.stream()
+                .map(this::convertToCarDTO)
+                .collect(Collectors.toList());
     }
     
-    public Car getCarByIdAndUser(Long carId, User user) {
-        return carRepository.findByIdAndUserId(carId, user.getId())
+    public CarDTO getCarByIdAndUser(Long carId, User user) {
+        Car car = carRepository.findByIdAndUserId(carId, user.getId())
                 .orElseThrow(() -> new NotFoundException("Auto no encontrado"));
+        return convertToCarDTO(car);
     }
     
-    public Car createCar(Car car, User user) {
-        if (carRepository.existsByLicensePlate(car.getLicensePlate())) {
+    public CarDTO createCar(CarCreateDTO carCreateDTO, User user) {
+        if (carRepository.existsByLicensePlate(carCreateDTO.getLicensePlate())) {
             throw new RuntimeException("La placa ya existe");
         }
         
+        Car car = new Car();
+        car.setBrand(carCreateDTO.getBrand());
+        car.setModel(carCreateDTO.getModel());
+        car.setYear(carCreateDTO.getYear());
+        car.setLicensePlate(carCreateDTO.getLicensePlate());
+        car.setColor(carCreateDTO.getColor());
+        car.setPhotoUrl(carCreateDTO.getPhotoUrl());
         car.setUser(user);
-        return carRepository.save(car);
+        
+        Car savedCar = carRepository.save(car);
+        return convertToCarDTO(savedCar);
     }
     
-    public Car updateCar(Long carId, Car carDetails, User user) {
-        Car car = getCarByIdAndUser(carId, user);
+    public CarDTO updateCar(Long carId, CarUpdateDTO carUpdateDTO, User user) {
+        Car car = carRepository.findByIdAndUserId(carId, user.getId())
+                .orElseThrow(() -> new NotFoundException("Auto no encontrado"));
         
-        car.setBrand(carDetails.getBrand());
-        car.setModel(carDetails.getModel());
-        car.setYear(carDetails.getYear());
-        car.setLicensePlate(carDetails.getLicensePlate());
-        car.setColor(carDetails.getColor());
-        car.setPhotoUrl(carDetails.getPhotoUrl());
+        car.setBrand(carUpdateDTO.getBrand());
+        car.setModel(carUpdateDTO.getModel());
+        car.setYear(carUpdateDTO.getYear());
+        car.setLicensePlate(carUpdateDTO.getLicensePlate());
+        car.setColor(carUpdateDTO.getColor());
+        car.setPhotoUrl(carUpdateDTO.getPhotoUrl());
         
-        return carRepository.save(car);
+        Car savedCar = carRepository.save(car);
+        return convertToCarDTO(savedCar);
     }
     
     public void deleteCar(Long carId, User user) {
-        Car car = getCarByIdAndUser(carId, user);
+        Car car = carRepository.findByIdAndUserId(carId, user.getId())
+                .orElseThrow(() -> new NotFoundException("Auto no encontrado"));
         carRepository.delete(car);
     }
     
-    // Búsqueda por placa o modelo
-    public List<Car> searchCars(User user, String search) {
-        return carRepository.findByUserIdAndSearch(user.getId(), search);
+    // Búsqueda por placa
+    public List<CarDTO> searchCars(User user, String search) {
+        List<Car> cars = carRepository.findByUserIdAndLicensePlateContainingIgnoreCase(user.getId(), search);
+        return cars.stream()
+                .map(this::convertToCarDTO)
+                .collect(Collectors.toList());
     }
     
     // Filtrado por año
-    public List<Car> filterCarsByYear(User user, Integer year) {
-        return carRepository.findByUserIdAndYear(user.getId(), year);
+    public List<CarDTO> filterCarsByYear(User user, Integer year) {
+        List<Car> cars = carRepository.findByUserIdAndYear(user.getId(), year);
+        return cars.stream()
+                .map(this::convertToCarDTO)
+                .collect(Collectors.toList());
     }
     
     // Filtrado por marca
-    public List<Car> filterCarsByBrand(User user, String brand) {
-        return carRepository.findByUserIdAndBrand(user.getId(), brand);
+    public List<CarDTO> filterCarsByBrand(User user, String brand) {
+        List<Car> cars = carRepository.findByUserIdAndBrand(user.getId(), brand);
+        return cars.stream()
+                .map(this::convertToCarDTO)
+                .collect(Collectors.toList());
+    }
+    
+    // Método auxiliar para convertir Car a CarDTO
+    private CarDTO convertToCarDTO(Car car) {
+        return new CarDTO(
+                car.getId(),
+                car.getBrand(),
+                car.getModel(),
+                car.getYear(),
+                car.getLicensePlate(),
+                car.getColor(),
+                car.getPhotoUrl(),
+                car.getUser().getId()
+        );
     }
 }
